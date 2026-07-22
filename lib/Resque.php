@@ -347,7 +347,7 @@ class Resque
         return md5(uniqid('', true));
     }
 
-    public static function getInProgressJobsCount(string $workersPrefix = null): int {
+    public static function getInProgressJobsCount(?string $workersPrefix = null): int {
         if (empty($workersPrefix)) {
             return self::redis()->hlen(self::CURRENT_JOBS);
         }
@@ -363,7 +363,7 @@ class Resque
      *
      * @return array of unfinished jobs
      */
-    public static function cleanWorkers(string $workersPrefix = null): array {
+    public static function cleanWorkers(?string $workersPrefix = null): array {
         $notFinishedJobs = [];
         $workers = self::redis()->sMembers(self::WORKERS);
         foreach ($workers as $workerId) {
@@ -379,7 +379,7 @@ class Resque
         return $notFinishedJobs;
     }
 
-    public static function getJobsToRerun(string $workersPrefix = null, int $jobTimeout = 60, array $workersToRerun = []) {
+    public static function getJobsToRerun(?string $workersPrefix = null, int $jobTimeout = 60, array $workersToRerun = []) {
         $jobsToRerun = [];
         $workers = self::redis()->hKeys(self::CURRENT_JOBS);
         $now = date_timestamp_get(date_create());
@@ -420,7 +420,7 @@ class Resque
         return self::redis()->get(self::WORKER_PREFIX . $workerId . self::PING_SUFFIX) !== false;
     }
 
-    private static function isEnvWorker(string $workerId, string $workersPrefix = null): bool {
+    private static function isEnvWorker(string $workerId, ?string $workersPrefix = null): bool {
        return  (empty($workersPrefix) || strpos($workerId, $workersPrefix) === 0)
            && strpos($workerId, self::SCHEDULER_IDENTIFIER) === false;
     }
